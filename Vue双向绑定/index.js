@@ -43,33 +43,35 @@ TimoVue.prototype.init = function(options) {
     this._binding = {};
 
     this.observer(this.$data);
+    this.compile(this.$el);
 }
 /*
 *实现observer监听器
 */
 TimoVue.prototype.observer = function(data) {
-    var value;
+    var _this = this;
     // 对data进行遍历
     Object.keys(data).forEach(function(key) {
 
-        this._binding[key] = {
+        _this._binding[key] = {
             _directives: []
         };
 
-        value = data[key];
+        var value = data[key];
         //如果value是对象，则递归处理
-        this._observer(value);
-        var binding = this._binding[key];
+        _this._observer(value);
+        var binding = _this._binding[key];
         Object.defineProperty(data, key, {
             enumerable: true,
             configurable: true,
             get: function() {
-                console.log(`劫持${value}`)
+                console.log(`劫持${value}`);
+                return value;
             },
             set: function(newVal) {
                 console.log(`设置新的值 ${value} =====> ${newVal}`);
                 value = newVal;
-                binding._directive.forEach(function(item) {
+                binding._directives.forEach(function(item) {
                     item.update();
                 })
             }
@@ -91,13 +93,13 @@ TimoVue.prototype.compile = function(root) {
     var nodes = root.children;  //拿到所有的子节点 一个HTMLCollection对象
     var nodesArray = [].slice.call(nodes);  //转换成数组
     nodesArray.forEach(function(node) {
-        this._compile(node);
+        _this._compile(node);
         if(node.hasAttribute('v-on:click')) {
-            node.onClick = (function() {
+            node.onclick = (function() {
                 var attrVal = node.getAttribute('v-on:click');
                 //bind使data的作用域与method保持一致
                 return _this.$methods[attrVal].bind(_this.$data);
-            })
+            })();
         }
         if(node.hasAttribute('v-model') && (node.tagName == 'INPUT' || 
             node.tagName == 'TEXTAREA')) {
