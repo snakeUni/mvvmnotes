@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="index.js"></script>
+</head>
+<body>
+	<div id="timo-app">
+	    <input type="text" v-model="timo">
+	    <p>{{timo}}</p>
+	    <button v-on:click="getTimo">get Timo</button>
+	</div>
+</body>
+<script type="text/javascript">
+	var vm = new TimoVue({
+        el: '#timo-app',
+        data: {
+            timo: 'Hello Timo!'
+        },
+        methods: {
+            getTimo: function() {
+                this.timo = 'this is timo';
+            }
+        }
+    });
+</script>
+</html>
