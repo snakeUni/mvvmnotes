@@ -40,6 +40,7 @@ TimoVue.prototype.observer = function(data) {
         };
 
         var value = data[key];
+        var oldValue;
         //如果value是对象，则递归处理
         _this._observer(value);
         var binding = _this._binding[key];
@@ -52,9 +53,10 @@ TimoVue.prototype.observer = function(data) {
             },
             set: function(newVal) {
                 console.log(`设置新的值 ${value} =====> ${newVal}`);
+                oldValue = value;
                 value = newVal;
                 binding._directives.forEach(function(item) {
-                    item.update();
+                    item.update(oldValue);
                 })
             }
         })
@@ -72,54 +74,72 @@ TimoVue.prototype._observer = function(value) {
 TimoVue.prototype.compile = function(root) {
     //root为绑定的根元素
     var _this = this;
-    var nodes = root.children;  //拿到所有的子节点 一个HTMLCollection对象
+    var nodes = root.childNodes;  //拿到所有的子节点 一个NodeLists对象
     var nodesArray = [].slice.call(nodes);  //转换成数组
+    var reg = /\{\{(.*)\}\}/; 
     nodesArray.forEach(function(node) {
         _this._compile(node);
-        if(node.hasAttribute('v-on:click')) {
+        if(node.nodeType == 1) {
+            _this._compileNode(node, _this);
+        } else if(node.nodeType == 3) {
+            _this._compileText(node, _this, reg);
+        }   
+    })
+}
+TimoVue.prototype._compile = function(node) {
+    if(node.childNodes && node.childNodes.length) {
+        this.compile(node);
+    }
+}
+// 对元素节点的处理
+TimoVue.prototype._compileNode = function(node, that) {
+    if(node.hasAttribute('v-on:click')) {
             node.onclick = (function() {
                 var attrVal = node.getAttribute('v-on:click');
                 //bind使data的作用域与method保持一致
-                return _this.$methods[attrVal].bind(_this.$data);
+                return that.$methods[attrVal].bind(that.$data);
             })();
         }
         if(node.hasAttribute('v-model') && (node.tagName == 'INPUT' || 
             node.tagName == 'TEXTAREA')) {
             node.addEventListener('input', (function(key) {
                 var attrVal = node.getAttribute('v-model');
-                _this._binding[attrVal]._directives.push(new Watcher(
+                that._binding[attrVal]._directives.push(new Watcher(
                     'input',
                     node,
-                    _this,
+                    that,
                     attrVal,
                     'value'))
 
                 return function() {
-                    _this.$data[attrVal] = node.value;
+                    that.$data[attrVal] = node.value;
                 }
             })());
         }
         if(node.hasAttribute('v-bind')) {
             var attrVal = node.getAttribute('v-bind');
-            _this._binding[attrVal]._directives.push(new Watcher(
+            that._binding[attrVal]._directives.push(new Watcher(
                 'text',
                 node,
-                _this,
+                that,
                 attrVal,
                 'innerHTML'));
         }
-    })
 }
-TimoVue.prototype._compile = function(node) {
-    if(node.children && node.children.length) {
-        this.compile(node);
+// 对文本节点的处理
+TimoVue.prototype._compileText = function(node, that, reg) {
+    var text = node.textContent;
+    if(reg.test(text)) {
+        var matches = node.textContent.match(reg);
+        var content = matches[0];
+        var key = matches[1];
+        that._binding[key]._directives.push(new Watcher(
+            'text',
+            node,
+            that,
+            key,
+            'textContent'));
     }
-}
-TimoVue.prototype._compileNode = function(node) {
-    
-}
-TimoVue.prototype._compileText = function(node) {
-
 }
 
 /*
@@ -134,7 +154,25 @@ function Watcher(name, el, vm, exp, attr) {
 
     this.update();
 }
-Watcher.prototype.update = function() {
+Watcher.prototype.update = function(value) {
+    if(this.el.nodeType == 1) {
+        this.updateElement();
+    } else {
+        this.updateText(value);
+    }   
+}
+Watcher.prototype.updateText = function(value) {
+    var text = this.el.textContent;
+    var replaceText = '{{' + this.exp + '}}';
+    //判断语句用于第一次初始化
+    if(text.indexOf(replaceText) != -1) {
+        text = text.replace(replaceText, this.vm.$data[this.exp]);
+    } else {
+        text = text.replace(value, this.vm.$data[this.exp]);
+    }
+    this.el[this.attr] = text;
+}
+Watcher.prototype.updateElement = function() {
     this.el[this.attr] = this.vm.$data[this.exp];
 }
 
