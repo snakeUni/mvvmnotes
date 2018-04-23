@@ -116,7 +116,7 @@ TimoVue.prototype._compile = function(node) {
     }
 }
 TimoVue.prototype._compileNode = function(node) {
-
+    
 }
 TimoVue.prototype._compileText = function(node) {
 
