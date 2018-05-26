@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<script src="https://cdn.bootcss.com/react/15.4.2/react.min.js"></script>
+	<script src="https://cdn.bootcss.com/react/15.4.2/react-dom.min.js"></script>
+	<script src="https://cdn.bootcss.com/babel-standalone/6.22.1/babel.min.js"></script>
+</head>
+<body>
+	<div id="app"></div>
+	
+</body>
+<!-- 用于测试组件生命周期调用的顺序 -->
+<script type="text/babel">
+	class Ele extends React.Component {
+		constructor(props) {
+			super(props)
+			console.log('组件调用constructor')
+			this.state = {
+				newName: '11'
+			}
+			this.handleClick = this.handleClick.bind(this)
+		}
+		componentWillMount() {
+			console.log('组件调用componentWillMount')
+		}
+		componentDidMount() {
+			console.log('组件调用componentDidMount')
+		}
+		componentWillReceiveProps( nextProps) {
+			console.log('preProps:', this.props)
+			console.log('nextProps:', nextProps)
+			console.log('组件调用componentWillReceiveProps')
+		}
+		shouldComponentUpdate(nextProps, nextState) {
+			console.log('nextProps:', nextProps)
+			console.log('nextState:', nextState)
+			console.log('组件调用shouldComponentUpdate')
+			return true
+			
+		}
+		componentWillUpdate() {
+			console.log('组件调用componentWillUpdate')
+		}
+		componentDidUpdate() {
+			console.log('组件调用componentDidUpdate')
+		}
+		componentWillUnmount() {
+			console.log('组件调用componentWillUnmount')
+		}
+		handleClick() {
+			this.setState({newName: '222'})
+		}
+		render() {
+			console.log('组件调用了render')
+			return (
+				<div>
+					111{this.props.name}
+					<button onClick={this.handleClick}>更新状态</button>
+					<p>这是状态更新后的{this.state.newName}</p>
+				</div>
+			)
+		}
+	}
+	class Parent extends React.Component {
+		constructor() {
+			super()
+			this.state = {
+				name: '父传递下来的名字-蓝银草'
+			}
+		}
+		handleClick() {
+			this.setState({name: '父更新下来的名字-蓝银皇'})
+		}
+		render() {
+			return (
+				<div>
+					<Ele name={this.state.name} />
+					<button onClick={this.handleClick.bind(this)}>点击父组件</button>
+				</div>
+			)
+		}
+	}
+	ReactDOM.render(<Parent />, document.getElementById('app'));
+</script>
+</html>
