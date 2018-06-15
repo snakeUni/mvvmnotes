@@ -54,6 +54,10 @@
 		}
 		render() {
 			console.log('组件调用了render')
+			const {age, a, b} = this.props
+			console.log("age:", age)
+			console.log("a:", a)
+			console.log("b:", b)
 			return (
 				<div>
 					111{this.props.name}
@@ -76,12 +80,43 @@
 		render() {
 			return (
 				<div>
-					<Ele name={this.state.name} />
+					<Ele name={this.state.name} age />
 					<button onClick={this.handleClick.bind(this)}>点击父组件</button>
 				</div>
 			)
 		}
 	}
-	ReactDOM.render(<Parent />, document.getElementById('app'));
+	class ParentClone extends React.Component {
+		constructor (props) {
+			super(props)
+		}
+		getNewChildren() {
+			
+			const {children} = this.props
+			console.log("children", children)
+			var obj = {
+				a:1,b:2
+			}
+
+			var filteredChildren = React.Children.toArray(children).filter(function (c) {
+	            return !!c;
+	        });
+	        console.log("filteredChildren", filteredChildren)
+			return filteredChildren.map(child => {
+				return React.cloneElement(child, obj)
+			})
+		}
+		render() {
+			return (
+				<div>
+					{this.getNewChildren()}
+				</div>
+			)
+		}
+	}
+	ReactDOM.render(<ParentClone >
+						<Ele name="111"/>
+					</ParentClone>, 
+	document.getElementById('app'));
 </script>
 </html>
