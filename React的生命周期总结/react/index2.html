@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+<!-- 	<script crossorigin src="https://unpkg.com/react@16.3.0/umd/react.development.js"></script>
+	<script crossorigin src="https://unpkg.com/react-dom@16.3.0/umd/react-dom.development.js"></script> -->
+	<script type="text/javascript" src="./react.development.js"></script>
+	<script type="text/javascript" src="./react-dom.development.js"></script>
+	<script src="https://cdn.bootcss.com/babel-standalone/6.22.1/babel.min.js"></script>
+</head>
+<body>
+	<div id="app"></div>
+	
+</body>
+<!-- 用于测试组件生命周期调用的顺序 -->
+<script type="text/babel">
+	class Ele extends React.Component {
+		constructor(props) {
+			super(props)
+		}
+		render() {
+			return (
+				<div>
+					111{this.props.name}
+				</div>
+			)
+		}
+	}
+	ReactDOM.render(<div>
+						<Ele name="111"/>
+						<Ele name="dhsa"/>
+					</div>, 
+	document.getElementById('app'));
+</script>
+</html>
