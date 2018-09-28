@@ -22,3 +22,11 @@ this.setState(state => {
   return {list: [...state.list, xxx]}
 })
 ```
+所以永远不要去直接改变this.state 把state看成是不可变的。
+Never mutate this.state directly, as calling setState() afterwards may replace the mutation you made. Treat this.state as if it were immutable.
+If the next state depends on the current state, we recommend using the updater function form, instead:
+```
+this.setState((state) => {
+  return {quantity: state.quantity + 1};
+})
+```
