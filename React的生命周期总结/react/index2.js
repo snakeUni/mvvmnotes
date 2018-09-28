@@ -60,46 +60,54 @@ var replayUnitOfWork = void 0;
 var isReplayingFailedUnitOfWork = void 0;
 var originalReplayError = void 0;
 var rethrowOriginalError = void 0;
+
+var NoWork = 0;
+var Sync = 1;
+var Never = MAX_SIGNED_31_BIT_INT;
+
+var UNIT_SIZE = 10;
+var MAGIC_NUMBER_OFFSET = 2;
+
 /*
 * FiberNode 结构
 * tag 即为上面几个全局变量
-* stateNode 为真实的DOM节点
+* stateNode 对应的DOM或者instance
 * return 父元素Fiber结构
 * sibling 邻居节点Fiber结构
 * alternate 当前节点Fiber的一个副本
 */
 function FiberNode(tag, pendingProps, key, mode) {
   // Instance
-  this.tag = tag;
+  this.tag = tag; //节点类型
   this.key = key;
-  this.type = null;
-  this.stateNode = null;
+  this.type = null; //对应的组件，可以是fn,class
+  this.stateNode = null; //对应的Dom或者instance
 
   // Fiber
-  this.return = null;
-  this.child = null;
-  this.sibling = null;
+  this.return = null; //父节点
+  this.child = null; //子节点
+  this.sibling = null; //邻居节点
   this.index = 0;
 
   this.ref = null;
 
-  this.pendingProps = pendingProps;
-  this.memoizedProps = null;
-  this.updateQueue = null;
-  this.memoizedState = null;
+  this.pendingProps = pendingProps; //待更新的props
+  this.memoizedProps = null;  //旧的props
+  this.updateQueue = null; //更新的队列
+  this.memoizedState = null; //旧的state
 
   this.mode = mode;
 
   // Effects
-  this.effectTag = NoEffect;
-  this.nextEffect = null;
+  this.effectTag = NoEffect; //更新dom的类型
+  this.nextEffect = null; //下一个更新操作
 
-  this.firstEffect = null;
-  this.lastEffect = null;
+  this.firstEffect = null; //第一个更新操作
+  this.lastEffect = null; //最后一个更新操作
 
   this.expirationTime = NoWork;
 
-  this.alternate = null;
+  this.alternate = null; //当前fiber的副本用于更新操作
 
   if (enableProfilerTimer) {
     this.selfBaseTime = 0;
@@ -116,3 +124,82 @@ function FiberNode(tag, pendingProps, key, mode) {
     }
   }
 }
+
+
+scheduleDeferredCallback: rIC,
+cancelDeferredCallback: cIC
+
+// TODO: There's no way to cancel, because Fiber doesn't atm.
+var rIC = void 0;
+var cIC = void 0;
+
+if (!ExecutionEnvironment_1.canUseDOM) {
+  rIC = function (frameCallback) {
+    return setTimeout(function () {
+      frameCallback({
+        timeRemaining: function () {
+          return Infinity;
+        },
+
+        didTimeout: false
+      });
+    });
+  };
+  cIC = function (timeoutID) {
+    clearTimeout(timeoutID);
+  };
+} else if (alwaysUseRequestIdleCallbackPolyfill || typeof requestIdleCallback !== 'function' || typeof cancelIdleCallback !== 'function') {
+  // Polyfill requestIdleCallback and cancelIdleCallback
+} else {
+  rIC = window.requestIdleCallback;
+  cIC = window.cancelIdleCallback;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

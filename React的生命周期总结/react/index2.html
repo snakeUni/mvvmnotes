@@ -11,26 +11,132 @@
 </head>
 <body>
 	<div id="app"></div>
-	
+	<input type="radio" name="">
 </body>
 <!-- 用于测试组件生命周期调用的顺序 -->
 <script type="text/babel">
 	class Ele extends React.Component {
 		constructor(props) {
+			console.log("******组件调用el11构造函数------")
 			super(props)
+			this.state = {
+				desc: ''
+			}
+			this.handleClick = this.handleClick.bind(this)
+		}
+
+		componentDidMount () {
+			console.log('******组件调用componentDidMount****EleEle')
+			this.setState({desc: '这是描述'})
+		}
+		componentWillMount() {
+			console.log('组件调用---Ele---componentWillMount')
+		}
+		componentDidCatch(error) {
+			console.log('error:', error)
+		}
+		componentWillReceiveProps( nextProps) {
+			console.log('组件调用---Ele---componentWillReceiveProps')
+		}
+		shouldComponentUpdate(nextProps, nextState) {
+			console.log('组件调用---Ele---shouldComponentUpdate')
+			return true
+			
+		}
+		componentWillUpdate() {
+			console.log('组件调用---Ele---componentWillUpdate')
+		}
+		componentDidUpdate() {
+			console.log('组件调用---Ele---componentDidUpdate')
+		}
+		componentWillUnmount() {
+			console.log('组件调用---Ele---componentWillUnmount')
+		}
+
+		handleClick () {
+			this.setState({desc: '新的描述'}, () => {
+			console.log(222)
+		})
 		}
 		render() {
+			console.log("组件调用了render")
 			return (
 				<div>
 					111{this.props.name}
+					{this.state.desc}
+					<button onClick={this.handleClick}>描述</button>
+				</div>
+			)
+		}
+	}
+	class Ele2 extends React.Component {
+		constructor(props) {
+			console.log("******组件调用el2222222构造函数------")
+			super(props)
+			this.state = {
+				desc: '初始化state'
+			}
+			this.handleClick = this.handleClick.bind(this)
+		}
+
+		componentDidMount () {
+			console.log('----组件调用componentDidMount---Ele2Ele2')
+			this.setState({desc: '这是第二个描述'})
+		}
+		componentWillMount() {
+			console.log('组件调用****EL2222*****componentWillMount')
+		}
+		componentDidCatch(error) {
+			console.log('error:', error)
+		}
+		componentWillReceiveProps( nextProps) {
+			console.log('组件调用****EL2222*****componentWillReceiveProps')
+		}
+		shouldComponentUpdate(nextProps, nextState) {
+			console.log('组件调用****EL2222*****shouldComponentUpdate')
+			return true
+			
+		}
+		componentWillUpdate() {
+			console.log('组件调用****EL2222*****componentWillUpdate')
+		}
+		componentDidUpdate() {
+			console.log('组件调用****EL2222*****componentDidUpdate')
+		}
+		componentWillUnmount() {
+			console.log('组件调用****EL2222*****componentWillUnmount')
+		}
+
+		handleClick () {
+			this.setState({desc: '新的描述'})
+		}
+		render() {
+			console.log("组件调用了render")
+			return (
+				<div>
+					111{this.props.name}
+					{this.state.desc}
+					<a onClick={this.handleClick}>描述</a>
 				</div>
 			)
 		}
 	}
 	ReactDOM.render(<div>
 						<Ele name="111"/>
-						<Ele name="dhsa"/>
+						<Ele2 name="dhsa"/>
 					</div>, 
 	document.getElementById('app'));
+</script>
+<script type="text/javascript">
+	function requestIdCallback(deadline) {
+		console.log("*-------------------------*")
+		console.log("回调:", '这就是爱')
+		console.log("deadline:", deadline)
+		console.log("*-------------------------*")
+		console.log(deadline.timeRemaining())
+	}
+
+	var handle = window.requestIdleCallback(requestIdCallback, {timeout: 10000})
+
 </script>
 </html>

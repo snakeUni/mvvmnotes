@@ -1,4 +1,4 @@
-/** @license React v16.3.0f
+/** @license React v16.3.0
  * react-dom.development.js
  *
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -5684,10 +5684,7 @@ function shouldConstruct(Component) {
 // This is used to create an alternate fiber to do work on.
 function createWorkInProgress(current, pendingProps, expirationTime) {
   var workInProgress = current.alternate;
-  console.log("调用createWorkInProgress:", current)
-  console.log("current是有值的呀，为啥current.alternate是Null呢:", current.alternate)
   if (workInProgress === null) {
-    console.log('不可能走这里吧')
     // We use a double buffering pooling technique because we know that we'll
     // only ever need at most two versions of a tree. We pool the "other" unused
     // node that we're free to reuse. This is lazily created to avoid allocating
@@ -5707,6 +5704,7 @@ function createWorkInProgress(current, pendingProps, expirationTime) {
     workInProgress.alternate = current;
     current.alternate = workInProgress;
   } else {
+    console.log("走的else")
     workInProgress.pendingProps = pendingProps;
 
     // We already have an alternate.
@@ -6715,7 +6713,6 @@ var q2 = void 0;
 function ensureUpdateQueues(fiber) {
   q1 = q2 = null;
   // We'll have at least one and at most two distinct update queues.
-  console.log("fiber:", fiber)
   var alternateFiber = fiber.alternate;
   var queue1 = fiber.updateQueue;
   console.log("queue1:", queue1)
@@ -6730,7 +6727,6 @@ function ensureUpdateQueues(fiber) {
   var queue2 = void 0;
   if (alternateFiber !== null) {
     queue2 = alternateFiber.updateQueue;
-    console.log("queue2:", queue2)
     if (queue2 === null) {
       queue2 = alternateFiber.updateQueue = createUpdateQueue(null);
     }
@@ -6742,8 +6738,6 @@ function ensureUpdateQueues(fiber) {
   // Use module variables instead of returning a tuple
   q1 = queue1;
   q2 = queue2;
-  console.log("resolve q1:", q1)
-  console.log("resolve q2:", q2)
 }
 
 function insertUpdateIntoFiber(fiber, update) {
@@ -6804,9 +6798,7 @@ function getStateFromUpdate(update, instance, prevState, props) {
 }
 
 function processUpdateQueue(current, workInProgress, queue, instance, props, renderExpirationTime) {
-  console.log("调用processUpdateQueue并开始处理更新队列*&*&*&*&*&*", current)
-  console.log("queue:", queue)
-  console.log("workInProgress:", workInProgress)
+  console.log("currentQueue:", current)
   if (current !== null && current.updateQueue === queue) {
     // We need to create a work-in-progress queue, by cloning the current queue.
     var currentQueue = queue;
@@ -7181,7 +7173,6 @@ var ReactFiberClassComponent = function (legacyContext, scheduleWork, computeExp
   }
 
   function adoptClassInstance(workInProgress, instance) {
-    console.log("******替换updater*******")
     instance.updater = updater;
     workInProgress.stateNode = instance;
     // The instance needs access to the fiber so that it can schedule updates
@@ -7192,7 +7183,6 @@ var ReactFiberClassComponent = function (legacyContext, scheduleWork, computeExp
   }
 
   function constructClassInstance(workInProgress, props) {
-    console.log("调用******构造函数&workInProgress=", workInProgress)
     var ctor = workInProgress.type;
     var unmaskedContext = getUnmaskedContext(workInProgress);
     var needsContext = isContextConsumer(workInProgress);
@@ -7204,7 +7194,6 @@ var ReactFiberClassComponent = function (legacyContext, scheduleWork, computeExp
     }
 
     var instance = new ctor(props, context);
-    console.log("输出构造的实例：", instance)
     var state = instance.state !== null && instance.state !== undefined ? instance.state : null;
     adoptClassInstance(workInProgress, instance);
 
@@ -7342,7 +7331,6 @@ var ReactFiberClassComponent = function (legacyContext, scheduleWork, computeExp
 
   // Invokes the mount life-cycles on a previously never rendered instance.
   function mountClassInstance(workInProgress, renderExpirationTime) {
-    console.log("*******开始进行生命周期的调用**************")
     var ctor = workInProgress.type;
     var current = workInProgress.alternate;
 
@@ -8671,7 +8659,7 @@ var ReactFiberBeginWork = function (config, hostContext, legacyContext, newConte
   }
 
   function updateFunctionalComponent(current, workInProgress) {
-    console.log("调用updateFunctionalComponent更新函数组件*************")
+    console.log("调用updateFunctionalComponent更新函数组件，就是我们的类组件")
     var fn = workInProgress.type;
     var nextProps = workInProgress.pendingProps;
 
@@ -8708,8 +8696,6 @@ var ReactFiberBeginWork = function (config, hostContext, legacyContext, newConte
     // Push context providers early to prevent context stack mismatches.
     // During mounting we don't know the child context yet as the instance doesn't exist.
     // We will invalidate the child context in finishClassComponent() right after rendering.
-    console.log("更新类组件updateClassComponent**********")
-    console.log("current:", current)
     var hasContext = pushLegacyContextProvider(workInProgress);
     var shouldUpdate = void 0;
     if (current === null) {
@@ -8813,7 +8799,6 @@ var ReactFiberBeginWork = function (config, hostContext, legacyContext, newConte
   }
 
   function updateHostRoot(current, workInProgress, renderExpirationTime) {
-    console.log("更新hostRoot&workInProgress=", workInProgress)
     pushHostRootContext(workInProgress);
     var updateQueue = workInProgress.updateQueue;
     if (updateQueue !== null) {
@@ -9348,7 +9333,6 @@ var ReactFiberBeginWork = function (config, hostContext, legacyContext, newConte
   }
 
   function beginWork(current, workInProgress, renderExpirationTime) {
-    console.log("进入beginWork,&workInProgress=", workInProgress)
     if (workInProgress.expirationTime === NoWork || workInProgress.expirationTime > renderExpirationTime) {
       return bailoutOnLowPriority(current, workInProgress);
     }
@@ -10113,7 +10097,6 @@ var ReactFiberCommitWork = function (config, captureError, scheduleWork, compute
   }
 
   function commitBeforeMutationLifeCycles(current, finishedWork) {
-    console.log("调用新的生命周期钩子：", getSnapshotBeforeUpdate)
     switch (finishedWork.tag) {
       case ClassComponent:
         {
@@ -11714,7 +11697,6 @@ var ReactFiberScheduler = function (config) {
   }
 
   function commitAllHostEffects() {
-    console.log("---nextEffect----", nextEffect)
     while (nextEffect !== null) {
       {
         ReactDebugCurrentFiber.setCurrentFiber(nextEffect);
@@ -12165,8 +12147,6 @@ var ReactFiberScheduler = function (config) {
     // progress.
     var current = workInProgress.alternate;
 
-    console.log("开始事件循环并且进入performUnitOfWork函数")
-
     // See if beginning this work spawns more work.
     startWorkTimer(workInProgress);
     {
@@ -12215,16 +12195,12 @@ var ReactFiberScheduler = function (config) {
 
     // Check if we're starting from a fresh stack, or if we're resuming from
     // previously yielded work.
-    console.log("开始renderRoot")
-    console.log("刚开始的nextUnitOfWork:", nextUnitOfWork)
     if (expirationTime !== nextRenderExpirationTime || root !== nextRoot || nextUnitOfWork === null) {
       // Reset the stack and start working from the root.
       resetStack();
-      console.log("root到底是啥:", root)
       nextRoot = root;
       nextRenderExpirationTime = expirationTime;
       nextUnitOfWork = createWorkInProgress(nextRoot.current, null, nextRenderExpirationTime);
-      console.log("通过createWorkInProgress后的刚开始的nextUnitOfWork拿到了root的一个副本:", nextUnitOfWork)
       root.pendingCommitExpirationTime = NoWork;
     }
 
@@ -12236,7 +12212,6 @@ var ReactFiberScheduler = function (config) {
       try {
         workLoop(isAsync);
       } catch (thrownValue) {
-        console.log("错误边界的处理")
         if (nextUnitOfWork === null) {
           // This is a fatal error.
           didFatal = true;
@@ -12722,7 +12697,7 @@ var ReactFiberScheduler = function (config) {
       }
     } else {
       while (nextFlushedRoot !== null && nextFlushedExpirationTime !== NoWork && (minExpirationTime === NoWork || minExpirationTime >= nextFlushedExpirationTime)) {
-        console.log("调用：performWorkOnRoot", "nextFlushedRoot:", nextFlushedRoot, "nextFlushedExpirationTime:", nextFlushedExpirationTime)
+        console.log("调用：performWorkOnRoot")
         performWorkOnRoot(nextFlushedRoot, nextFlushedExpirationTime, false);
         findHighestPriorityRoot();
       }
@@ -12745,7 +12720,6 @@ var ReactFiberScheduler = function (config) {
     deadline = null;
     deadlineDidExpire = false;
 
-    console.log("调用finishRendering")
     finishRendering();
   }
 
@@ -12838,7 +12812,6 @@ var ReactFiberScheduler = function (config) {
 
   function completeRoot(root, finishedWork, expirationTime) {
     // Check if there's a batch that matches this expiration time.
-    console.log('完成completeRoot')
     var firstBatch = root.firstBatch;
     if (firstBatch !== null && firstBatch._expirationTime <= expirationTime) {
       if (completedBatches === null) {
@@ -13087,8 +13060,6 @@ var ReactFiberReconciler$1 = function (config) {
     }
 
     var context = getContextForSubtree(parentComponent);
-    console.log("parentComponent:", parentComponent)
-    console.log("获取context:", context)
     if (container.context === null) {
       container.context = context;
     } else {
@@ -16956,6 +16927,7 @@ function legacyRenderSubtreeIntoContainer(parentComponent, children, container, 
     // Initial mount
     root = container._reactRootContainer = legacyCreateRootFromDOMContainer(container, forceHydrate);
     console.log("root:", root);
+    console.log("parentComponent:", parentComponent)
     if (typeof callback === 'function') {
       var originalCallback = callback;
       callback = function () {
@@ -16966,10 +16938,8 @@ function legacyRenderSubtreeIntoContainer(parentComponent, children, container, 
     // Initial mount should not be batched.
     DOMRenderer.unbatchedUpdates(function () {
       if (parentComponent != null) {
-        console.log("parentComponent:", parentComponent)
         root.legacy_renderSubtreeIntoContainer(parentComponent, children, callback);
       } else {
-        console.log("parentComponent为空，调用: root.render")
         root.render(children, callback);
       }
     });
@@ -16985,12 +16955,10 @@ function legacyRenderSubtreeIntoContainer(parentComponent, children, container, 
     if (parentComponent != null) {
       root.legacy_renderSubtreeIntoContainer(parentComponent, children, callback);
     } else {
-      console.log("调用render: children为:", children)
       root.render(children, callback);
     }
   }
   console.log("instance:", DOMRenderer.getPublicRootInstance(root._internalRoot))
-  console.log("最后开始调用:DOMRenderer.getPublicRootInstance 返回:", DOMRenderer.getPublicRootInstance(root._internalRoot))
   return DOMRenderer.getPublicRootInstance(root._internalRoot);
 }
 

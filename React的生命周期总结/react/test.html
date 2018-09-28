@@ -6,7 +6,7 @@
 <!-- 	<script crossorigin src="https://unpkg.com/react@16.3.0/umd/react.development.js"></script>
 	<script crossorigin src="https://unpkg.com/react-dom@16.3.0/umd/react-dom.development.js"></script> -->
 	<script type="text/javascript" src="./react.development.js"></script>
-	<script type="text/javascript" src="./react-dom.development.js"></script>
+	<script type="text/javascript" src="./react-dom.development1.js"></script>
 	<script src="https://cdn.bootcss.com/babel-standalone/6.22.1/babel.min.js"></script>
 </head>
 <body>
@@ -20,9 +20,12 @@
 			super(props)
 			console.log('组件调用constructor')
 			this.state = {
-				newName: '11'
+				newName: '11',
+				list: [1, 2, 3]
 			}
 			this.handleClick = this.handleClick.bind(this)
+			this.handleClick2 = this.handleClick2.bind(this)
+			this.handleClick3 = this.handleClick3.bind(this)
 		}
 		componentWillMount() {
 			console.log('组件调用componentWillMount')
@@ -39,11 +42,8 @@
 			console.log('组件调用componentWillReceiveProps')
 		}
 		shouldComponentUpdate(nextProps, nextState) {
-			console.log('nextProps:', nextProps)
-			console.log('nextState:', nextState)
-			console.log('组件调用shouldComponentUpdate')
+			console.log(this.state, nextProps, nextState)
 			return true
-			
 		}
 		componentWillUpdate() {
 			console.log('组件调用componentWillUpdate')
@@ -57,6 +57,16 @@
 		handleClick() {
 			this.setState({newName: '222'})
 		}
+		handleClick2() {
+			const _list = this.state.list
+			_list.push(4)
+			this.setState({list: _list})
+		}
+		handleClick3() {
+			const _list = [...this.state.list]
+			_list.push(5)
+			this.setState({list: _list})
+		}
 		render() {
 			console.log('组件调用了render')
 			const {age, a, b} = this.props
@@ -67,70 +77,15 @@
 				<div>
 					111{this.props.name}
 					<button onClick={this.handleClick}>更新状态</button>
+					<button onClick={this.handleClick2}>更新状态王企鹅群</button>
+					<button onClick={this.handleClick3}>结构更新</button>
 					<p>这是状态更新后的{this.state.newName}</p>
+					<p style={{color: 'red'}}>{this.state.list}</p>
 				</div>
 			)
 		}
 	}
-	class Parent extends React.Component {
-		constructor() {
-			super()
-			this.state = {
-				name: '父传递下来的名字-蓝银草'
-			}
-		}
-		componentDidMount() {
-			console.log('组件调用父亲的componentDidMount')
-		}
-		handleClick() {
-			this.setState({name: '父更新下来的名字-蓝银皇'})
-		}
-		render() {
-			return (
-				<div>
-					<Ele name={this.state.name} age />
-					<button onClick={this.handleClick.bind(this)}>点击父组件</button>
-				</div>
-			)
-		}
-	}
-	class ParentClone extends React.Component {
-		constructor (props) {
-			super(props)
-			this.ref = React.createRef()
-		}
-		getNewChildren() {
-			
-			const {children} = this.props
-			console.log("children", children)
-			var obj = {
-				a:1,b:2
-			}
-
-			var filteredChildren = React.Children.toArray(children).filter(function (c) {
-	            return !!c;
-	        });
-	        console.log("filteredChildren", filteredChildren)
-			return filteredChildren.map(child => {
-				return React.cloneElement(child, obj)
-			})
-		}
-		render() {
-		console.log("ref:", this.ref)
-			return (
-				<div>
-					{this.getNewChildren()}
-				</div>
-			)
-		}
-	}
-	ReactDOM.render(<ParentClone>
-						<Ele name="111"/>
-						<Ele name="2222">
-							<div>33333</div>
-						</Ele>
-						<Parent />
-					</ParentClone>, 
+	ReactDOM.render(<Ele />, 
 	document.getElementById('app'));
 </script>
 </html>
