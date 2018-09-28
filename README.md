@@ -16,3 +16,9 @@ this.setState({list: _list})
 const list = this.state.list
 this.setState({list: [...list, xxx]})
 ```
+我们知道setState第一个参数也是可以传递函数的
+```
+this.setState(state => {
+  return {list: [...state.list, xxx]}
+})
+```
