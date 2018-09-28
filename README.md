@@ -30,3 +30,6 @@ this.setState((state) => {
   return {quantity: state.quantity + 1};
 })
 ```
+
+附上官网的链接
+[react component](http://react.css88.com/docs/react-component.html)
