@@ -20,7 +20,8 @@
 			super(props)
 			console.log('组件调用constructor')
 			this.state = {
-				newName: '11'
+				newName: '11',
+				show: false
 			}
 			this.handleClick = this.handleClick.bind(this)
 		}
@@ -55,7 +56,9 @@
 			console.log('组件调用componentWillUnmount')
 		}
 		handleClick() {
-			this.setState({newName: '222'})
+			this.setState({newName: '222'}, () => {
+			console.log('setState后的回调***&&&*******')
+		})
 		}
 		render() {
 			console.log('组件调用了render')
@@ -68,6 +71,7 @@
 					111{this.props.name}
 					<button onClick={this.handleClick}>更新状态</button>
 					<p>这是状态更新后的{this.state.newName}</p>
+					<p id="iddd">2222</p>
 				</div>
 			)
 		}
@@ -76,20 +80,27 @@
 		constructor() {
 			super()
 			this.state = {
-				name: '父传递下来的名字-蓝银草'
+				name: '父传递下来的名字-蓝银草',
+				show: false
 			}
 		}
 		componentDidMount() {
 			console.log('组件调用父亲的componentDidMount')
 		}
+		componentDidUpdate() {
+			console.log('父父父父父父父父父父父父组件调用componentDidUpdate')
+		}
 		handleClick() {
-			this.setState({name: '父更新下来的名字-蓝银皇'})
+			this.setState({name: '父更新下来的名字-蓝银皇', show: true}, () => {
+			console.log(document.getElementById('iddd'))
+		})
 		}
 		render() {
 			return (
 				<div>
-					<Ele name={this.state.name} age />
+					{this.state.show ? <Ele name={this.state.name} age /> : null}
 					<button onClick={this.handleClick.bind(this)}>点击父组件</button>
+					
 				</div>
 			)
 		}
@@ -124,13 +135,7 @@
 			)
 		}
 	}
-	ReactDOM.render(<ParentClone>
-						<Ele name="111"/>
-						<Ele name="2222">
-							<div>33333</div>
-						</Ele>
-						<Parent />
-					</ParentClone>, 
+	ReactDOM.render(<Parent />, 
 	document.getElementById('app'));
 </script>
 </html>
